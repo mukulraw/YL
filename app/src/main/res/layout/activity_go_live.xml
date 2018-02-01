@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/up" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/dark_shade2" />
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="?attr/actionBarSize"
+                android:weightSum="1">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="30dp"
+                        android:orientation="vertical">
+
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="15dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/user_default"
+                            app:civ_border_color="#ffffff"
+                            app:civ_border_width="2dp" />
+
+                        <EditText
+                            android:id="@+id/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginStart="20dp"
+                            android:backgroundTint="#ffffff"
+                            android:gravity="center_horizontal"
+                            android:hint="Add a relevant title for your broadcast"
+                            android:textColor="#FFF"
+                            android:textColorHint="#ffffff" />
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center_horizontal"
+                            android:hint="# Tag your LIVE"
+                            android:textColorHint="#ffffff"
+                            android:textSize="16dp" />
+
+
+                    </LinearLayout>
+
+
+                    <ImageButton
+                        android:id="@+id/close"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/close"
+                        android:visibility="gone" />
+
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center"
+                            android:text="Share"
+                            android:textColor="#ffffff"
+                            android:textSize="18dp" />
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="20dp"
+                            android:orientation="horizontal">
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:orientation="horizontal">
+
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/white_circle"
+                                    android:paddingEnd="10dp"
+                                    android:paddingStart="10dp"
+                                    android:src="@drawable/facebook" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/white_circle"
+                                    android:paddingEnd="10dp"
+                                    android:paddingStart="10dp"
+                                    android:src="@drawable/google" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
+
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/white_circle"
+                                    android:paddingEnd="10dp"
+                                    android:paddingStart="10dp"
+                                    android:src="@drawable/twitter" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="20dp"
+                            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                            android:textColor="#ffffff"
+                            android:visibility="gone" />
+
+
+                        <Button
+                            android:id="@+id/golive"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:layout_marginEnd="50dp"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/accent_round2"
+                            android:text="GO LIVE"
+                            android:textColor="#fff" />
+
+
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>

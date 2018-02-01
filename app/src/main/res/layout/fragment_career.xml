@@ -1,0 +1,77 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.youthlive.youthlive.Fragments.AddressFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:textSize="19dp"
+                android:text="Graphic"/>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:textColor="#000"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Address" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:padding="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="19dp"
+                android:paddingLeft="20dp"
+                android:text="Youthliveid"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#000"
+                android:layout_height="wrap_content"
+                android:text="93"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="19dp"
+                android:paddingLeft="20dp"
+                android:text="Status"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#000"
+                android:layout_height="wrap_content"
+                android:text="Don't Mind"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

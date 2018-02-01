@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "977514558248",
+    "project_id": "youthlive-185404"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977514558248:android:d6b00f9925a36b8c",
+        "android_client_info": {
+          "package_name": "com.youthlive.youthlive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "977514558248-puu6ksmrpkbm46dtki2amgdj79ntltfb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "977514558248-ut74vgvbv4s6cfd8l3ckfojrc7qfi85u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.youthlive.youthlive",
+            "certificate_hash": "b91e7e36cd0c1dbc4d0c155177f93fa7c51db883"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMsHf6KutKMmwbjBzDui6dSGwVuybSEv8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
