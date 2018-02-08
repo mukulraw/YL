@@ -15,6 +15,7 @@ import com.youthlive.youthlive.deleteCareerPOJO.deleteCareerBean;
 import com.youthlive.youthlive.deleteVLOGPOJO.deleteVLOGBean;
 import com.youthlive.youthlive.editCareerPOJO.editCareerBean;
 import com.youthlive.youthlive.editEducationPOJO.editEducationBean;
+import com.youthlive.youthlive.engineLiveUsersPOJO.engineLiveUsersBean;
 import com.youthlive.youthlive.feedBackPOJO.feedBackBean;
 import com.youthlive.youthlive.followListPOJO.followListBean;
 import com.youthlive.youthlive.followPOJO.followBean;
@@ -316,6 +317,15 @@ public interface AllAPIs {
     })
     @GET("broadcasts")
     Call<getLiveBean> getLiveList();
+
+
+
+    @Headers({
+            "Accept: application/json",
+    })
+    @GET("v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/youthlive/instances/_definst_")
+    Call<String> getEngineLiveList();
+
 
 
     @Headers({

@@ -46,6 +46,8 @@ import com.wowza.gocoder.sdk.api.configuration.WZMediaConfig;
 import com.wowza.gocoder.sdk.api.devices.WZAudioDevice;
 import com.wowza.gocoder.sdk.api.devices.WZCameraView;
 import com.wowza.gocoder.sdk.api.errors.WZStreamingError;
+import com.wowza.gocoder.sdk.api.player.WZPlayerConfig;
+import com.wowza.gocoder.sdk.api.player.WZPlayerView;
 import com.wowza.gocoder.sdk.api.status.WZState;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
@@ -165,7 +167,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     ImageButton follow;
 
-    VideoView videoView;
+    WZPlayerView videoView;
 
     RelativeLayout cameraLayout1 , cameraLayout2;
 
@@ -202,7 +204,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        videoView = (VideoView)findViewById(R.id.video);
+        videoView = (WZPlayerView)findViewById(R.id.video);
 
         cameraLayout1 = (RelativeLayout)findViewById(R.id.camera_layout1);
 
@@ -1540,9 +1542,32 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         mBroadcastPlayer.setSurfaceView(mVideoSurface);
         mBroadcastPlayer.load();*/
 
-        videoView.setVideoURI(Uri.parse(resourceUri));
-        videoView.requestFocus();
-        videoView.start();
+        WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
+
+        wzPlayerConfig.setHostAddress("192.168.0.3");
+        wzPlayerConfig.setPortNumber(1935);
+        wzPlayerConfig.setApplicationName("youthlive");
+        wzPlayerConfig.setStreamName(uri);
+
+        //videoView.play();
+
+        videoView.play(wzPlayerConfig, new WZStatusCallback() {
+            @Override
+            public void onWZStatus(WZStatus wzStatus) {
+
+                Log.d("WZStatus:  " , wzStatus.toString());
+
+            }
+
+            @Override
+            public void onWZError(WZStatus wzStatus) {
+
+            }
+        });
+
+        //videoView.(Uri.parse(resourceUri));
+        //videoView.requestFocus();
+        //videoView.start();
 
 
     }

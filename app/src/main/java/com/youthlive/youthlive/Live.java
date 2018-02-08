@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.youthlive.youthlive.INTERFACE.AllAPIs;
+import com.youthlive.youthlive.engineLiveUsersPOJO.IncomingStream;
+import com.youthlive.youthlive.engineLiveUsersPOJO.engineLiveUsersBean;
 import com.youthlive.youthlive.getLivePOJO.Result;
 import com.youthlive.youthlive.getLivePOJO.getLiveBean;
 import com.youthlive.youthlive.wowzaAPIPOJO.wowzaAPIBean;
@@ -46,7 +49,7 @@ public class Live extends Fragment {
     LiveAdapter2 adapter2;
     ProgressBar progress;
     List<wowzaAPIBean> list;
-    List<liveBean> list2;
+    List<IncomingStream> list2;
 
     @Nullable
     @Override
@@ -147,19 +150,10 @@ public class Live extends Fragment {
 
         progress.setVisibility(View.VISIBLE);
 
-        final bean b = (bean) getContext().getApplicationContext();
-
-
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .build();
 
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(b.BASE_URL)
-                .client(okHttpClient)
+                .baseUrl("http://192.168.0.3:8087/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -167,30 +161,32 @@ public class Live extends Fragment {
         final AllAPIs cr = retrofit.create(AllAPIs.class);
 
 
-        Call<List<wowzaAPIBean>> call = cr.getAllStreams2(b.userId);
+        Call<String> call = cr.getEngineLiveList();
 
-        call.enqueue(new Callback<List<wowzaAPIBean>>() {
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<List<wowzaAPIBean>> call, Response<List<wowzaAPIBean>> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
 
-                list.clear();
+
+                Log.d("asdasd" , "data");
+
+
+                list2.clear();
 
                 try {
 
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (!Objects.equals(response.body().get(i).getUserStatus(), "stopped")) {
-                            list.add(response.body().get(i));
-                        }
-                    }
+                    //for (int i = 0; i < response.body().getIncomingStreams().size(); i++) {
+                        //if (!Objects.equals(response.body().get(i).getUserStatus(), "stopped")) {
+                    //    list2.add(response.body().getIncomingStreams().get(i));
+                        //}
+                    //}
 
+                    Log.d("response" , response.body());
 
                     try {
 
 
-
-
-
-                        adapter.setGridData(list);
+                        adapter2.setGridData(list2);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -205,17 +201,19 @@ public class Live extends Fragment {
 
 
 
-
                 progress.setVisibility(View.GONE);
-
             }
 
             @Override
-            public void onFailure(Call<List<wowzaAPIBean>> call, Throwable throwable) {
+            public void onFailure(Call<String> call, Throwable t) {
                 progress.setVisibility(View.GONE);
-                throwable.printStackTrace();
+
+                Log.d("asdasd" , t.toString());
+
             }
         });
+
+
 
 
     }
@@ -224,14 +222,14 @@ public class Live extends Fragment {
     public class LiveAdapter2 extends RecyclerView.Adapter<LiveAdapter2.ViewHolder> {
 
         Context context;
-        List<liveBean> list = new ArrayList<>();
+        List<IncomingStream> list = new ArrayList<>();
 
-        public LiveAdapter2(Context context, List<liveBean> list) {
+        public LiveAdapter2(Context context, List<IncomingStream> list) {
             this.context = context;
             this.list = list;
         }
 
-        public void setGridData(List<liveBean> list) {
+        public void setGridData(List<IncomingStream> list) {
             this.list = list;
             notifyDataSetChanged();
         }
@@ -249,24 +247,29 @@ public class Live extends Fragment {
 
             holder.setIsRecyclable(false);
 
-            final liveBean item = list.get(position);
+            final IncomingStream item = list.get(position);
 
-            holder.title.setText(item.getTitle());
+            //holder.title.setText(item.getTitle());
 
-            ImageLoader loader = ImageLoader.getInstance();
+            //ImageLoader loader = ImageLoader.getInstance();
 
-            loader.displayImage(item.getUserImage() , holder.image);
+            //loader.displayImage(item.getUserImage() , holder.image);
 
-            holder.viewCount.setText(item.getLiveUsers());
+            //holder.viewCount.setText(item.getLiveUsers());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(context, IrisPlayer.class);
-                    intent.putExtra("uri", item.getResourceUri());
-                    intent.putExtra("liveId", item.getLiveId());
-                    intent.putExtra("timelineId", item.getUserId());
+
+                    String name = item.getName();
+                    String[] dd = name.split("-");
+
+
+                    Intent intent = new Intent(context, PlayerActivity.class);
+                    intent.putExtra("uri", name);
+                    intent.putExtra("liveId", dd[1]);
+                    intent.putExtra("timelineId", dd[0]);
                     startActivity(intent);
 
                 }

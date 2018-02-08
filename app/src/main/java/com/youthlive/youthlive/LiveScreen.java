@@ -308,7 +308,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         //mBroadcaster = new Broadcaster(this, APPLICATION_ID, mBroadcasterObserver);
         //mBroadcaster.setRotation(getWindowManager().getDefaultDisplay().getRotation());
         //mBroadcaster.setTitle(getIntent().getStringExtra("title"));
-        bean b = (bean) getApplicationContext();
+        final bean b = (bean) getApplicationContext();
 
         username.setText(b.userName);
 
@@ -371,52 +371,10 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                 } else if (goCoderBroadcaster.getStatus().isRunning()) {
                     // Stop the broadcast that is currently running
                     goCoderBroadcaster.endBroadcast(LiveScreen.this);
-                } else {
-                    // Start streaming
-                    goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, LiveScreen.this);
                 }
 
 
-                final ProgressDialog pd = new ProgressDialog(LiveScreen.this);
 
-                pd.setMessage("Stopping Stream");
-                pd.setCancelable(false);
-                pd.show();
-
-                final Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://api.cloud.wowza.com/")
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                final AllAPIs cr = retrofit.create(AllAPIs.class);
-
-
-
-                Call<startStreamBean> call2 = cr.stopStream(key);
-
-                Log.d("startId", key);
-
-                call2.enqueue(new Callback<startStreamBean>() {
-                    @Override
-                    public void onResponse(Call<startStreamBean> call, retrofit2.Response<startStreamBean> response) {
-
-                        pd.dismiss();
-
-                        //toast.setText(response.body().getLiveStream().getState());
-                        //Toast.makeText(LiveScreen.this, response.body().getLiveStream().getState(), Toast.LENGTH_SHORT).show();
-
-                        //toast.show();
-                        finish();
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<startStreamBean> call, Throwable t) {
-                        progress.setVisibility(View.GONE);
-
-                    }
-                });
 
 
 
@@ -515,93 +473,116 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         bubbleView.setDrawableList(drawableList);
 
 
-        Timer t = new Timer();
+        /*Timer t = new Timer();
         t.schedule(new TimerTask() {
             @Override
             public void run() {
 
 
-/*
+*//*
                 if (mBroadcaster.canStartBroadcasting()) {
                     mBroadcaster.startBroadcast();
                 }
-*/
+*//*
 
 
             }
-        }, 3000);
+        }, 3000);*/
 
 
         progressDialog = new ProgressDialog(LiveScreen.this);
 
-        progressDialog.setMessage("Starting Stream");
+        progressDialog.setMessage("Starting Stream...");
 
         progressDialog.setCancelable(false);
 
         progressDialog.show();
 
 
+
+
+        //progress.setVisibility(View.VISIBLE);
+
+
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.cloud.wowza.com/")
+                .baseUrl(b.BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         final AllAPIs cr = retrofit.create(AllAPIs.class);
 
-        streamBean bosy = new streamBean();
-        LiveStream stream = new LiveStream();
-        stream.setName(title);
-        bosy.setLiveStream(stream);
+        Call<goLiveBean> call3 = cr.goLive(b.userId, b.userId, "");
 
-        Call<streamResponseBean> call = cr.createStream(bosy);
-
-        call.enqueue(new Callback<streamResponseBean>() {
+        call3.enqueue(new Callback<goLiveBean>() {
             @Override
-            public void onResponse(Call<streamResponseBean> call, retrofit2.Response<streamResponseBean> response) {
+            public void onResponse(Call<goLiveBean> call, retrofit2.Response<goLiveBean> response) {
 
-                final String host = response.body().getLiveStream().getSourceConnectionInformation().getPrimaryServer();
-                final String port = String.valueOf(response.body().getLiveStream().getSourceConnectionInformation().getHostPort());
-                final String appName = response.body().getLiveStream().getSourceConnectionInformation().getApplication();
-                final String streamName = response.body().getLiveStream().getSourceConnectionInformation().getStreamName();
+                if (Objects.equals(response.body().getStatus(), "1")) {
+                    //Toast.makeText(LiveScreen.this, "You are now live", Toast.LENGTH_SHORT).show();
+                    liveId = response.body().getData().getLiveId();
 
-                key = response.body().getLiveStream().getId();
-
-                Call<startStreamBean> call2 = cr.startStream(key);
-
-                Log.d("startId", key);
-
-                call2.enqueue(new Callback<startStreamBean>() {
-                    @Override
-                    public void onResponse(Call<startStreamBean> call, retrofit2.Response<startStreamBean> response) {
-
-                        Log.d("status", response.body().getLiveStream().getState());
-                        //Toast.makeText(LiveScreen.this, response.body().getLiveStream().getState(), Toast.LENGTH_SHORT).show();
-
-                        //toast.setText(response.body().getLiveStream().getState());
-                       // toast.show();
-
-                        checkStatus(key, host, port, appName, streamName);
+                    actions.setVisibility(View.VISIBLE);
 
 
+                    Log.d("liveId", liveId);
+                    Log.d("userId", b.userId);
+
+
+
+                    goCoderBroadcastConfig.setHostAddress("192.168.0.3");
+                    goCoderBroadcastConfig.setPortNumber(1935);
+                    goCoderBroadcastConfig.setApplicationName("youthlive");
+                    goCoderBroadcastConfig.setStreamName(userId + "-" + liveId);
+
+
+                    WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
+
+                    if (configValidationError != null) {
+                        //Toast.makeText(LiveScreen.this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
+                    } else if (goCoderBroadcaster.getStatus().isRunning()) {
+                        // Stop the broadcast that is currently running
+                        goCoderBroadcaster.endBroadcast(LiveScreen.this);
+                    } else {
+                        // Start streaming
+                        goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, LiveScreen.this);
                     }
 
-                    @Override
-                    public void onFailure(Call<startStreamBean> call, Throwable t) {
-                        progress.setVisibility(View.GONE);
 
-                    }
-                });
+                    progressDialog.dismiss();
 
+
+                    schedule(liveId);
+
+                } else {
+                    Toast.makeText(LiveScreen.this, "Error going on live", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                //progress.setVisibility(View.GONE);
 
             }
 
             @Override
-            public void onFailure(Call<streamResponseBean> call, Throwable t) {
-                progress.setVisibility(View.GONE);
-                t.printStackTrace();
+            public void onFailure(Call<goLiveBean> call, Throwable t) {
+                //progress.setVisibility(View.GONE);
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
@@ -649,72 +630,10 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
                             progressDialog.dismiss();
 
-                            goCoderBroadcastConfig.setHostAddress(host);
-                            goCoderBroadcastConfig.setPortNumber(Integer.parseInt(port));
-                            goCoderBroadcastConfig.setApplicationName(appName);
-                            goCoderBroadcastConfig.setStreamName(streamName);
-
-
-                            WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
-
-                            if (configValidationError != null) {
-                                //Toast.makeText(LiveScreen.this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
-                            } else if (goCoderBroadcaster.getStatus().isRunning()) {
-                                // Stop the broadcast that is currently running
-                                goCoderBroadcaster.endBroadcast(LiveScreen.this);
-                            } else {
-                                // Start streaming
-                                goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, LiveScreen.this);
-                            }
 
 
 
 
-                            progress.setVisibility(View.VISIBLE);
-
-                            final bean b = (bean) getApplicationContext();
-
-                            final Retrofit retrofit = new Retrofit.Builder()
-                                    .baseUrl(b.BASE_URL)
-                                    .addConverterFactory(ScalarsConverterFactory.create())
-                                    .addConverterFactory(GsonConverterFactory.create())
-                                    .build();
-
-                            final AllAPIs cr = retrofit.create(AllAPIs.class);
-
-                            Call<goLiveBean> call3 = cr.goLive(b.userId, id, "");
-
-                            call3.enqueue(new Callback<goLiveBean>() {
-                                @Override
-                                public void onResponse(Call<goLiveBean> call, retrofit2.Response<goLiveBean> response) {
-
-                                    if (Objects.equals(response.body().getStatus(), "1")) {
-                                        //Toast.makeText(LiveScreen.this, "You are now live", Toast.LENGTH_SHORT).show();
-                                        liveId = response.body().getData().getLiveId();
-
-                                        actions.setVisibility(View.VISIBLE);
-
-
-                                        Log.d("asdasd", liveId);
-                                        Log.d("asdasd", b.userId);
-
-
-                                        schedule(liveId);
-
-                                    } else {
-                                        //Toast.makeText(LiveScreen.this, "Error going on live", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-
-                                    progress.setVisibility(View.GONE);
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<goLiveBean> call, Throwable t) {
-                                    progress.setVisibility(View.GONE);
-                                }
-                            });
 
 
 
@@ -1558,53 +1477,6 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         }
 
 
-        final ProgressDialog pd = new ProgressDialog(LiveScreen.this);
-
-        pd.setMessage("Stopping Stream");
-        pd.setCancelable(false);
-        pd.show();
-
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.cloud.wowza.com/")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        final AllAPIs cr = retrofit.create(AllAPIs.class);
-
-
-
-        Call<startStreamBean> call2 = cr.stopStream(key);
-
-        Log.d("startId", key);
-
-        call2.enqueue(new Callback<startStreamBean>() {
-            @Override
-            public void onResponse(Call<startStreamBean> call, retrofit2.Response<startStreamBean> response) {
-
-                try {
-                    pd.dismiss();
-
-                    //toast.setText(response.body().getLiveStream().getState());
-                    //Toast.makeText(LiveScreen.this, response.body().getLiveStream().getState(), Toast.LENGTH_SHORT).show();
-
-                    //toast.show();
-                    finish();
-
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<startStreamBean> call, Throwable t) {
-                progress.setVisibility(View.GONE);
-
-            }
-        });
 
     }
 
