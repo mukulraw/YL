@@ -254,7 +254,6 @@ public class Login extends AppCompatActivity {
         edit = pref.edit();
 
 
-/*
         try {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
@@ -269,7 +268,6 @@ public class Login extends AppCompatActivity {
             Log.e("Asdasd", "printHashKey()", e);
         }
 
-*/
 
 
         String type = pref.getString("type", "");

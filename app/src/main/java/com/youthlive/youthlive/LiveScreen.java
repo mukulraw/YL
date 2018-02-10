@@ -530,9 +530,9 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
 
-                    goCoderBroadcastConfig.setHostAddress("192.168.0.3");
+                    goCoderBroadcastConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
                     goCoderBroadcastConfig.setPortNumber(1935);
-                    goCoderBroadcastConfig.setApplicationName("youthlive");
+                    goCoderBroadcastConfig.setApplicationName("live");
                     goCoderBroadcastConfig.setStreamName(userId + "-" + liveId);
 
 
