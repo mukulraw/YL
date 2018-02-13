@@ -11,51 +11,42 @@ import java.util.List;
 
 public class liveBean {
 
-    @SerializedName("author")
+    @SerializedName("applicationInstance")
     @Expose
-    private String author;
-    @SerializedName("created")
+    private String applicationInstance;
+    @SerializedName("name")
     @Expose
-    private Integer created;
-    @SerializedName("customData")
+    private String name;
+    @SerializedName("sourceIp")
     @Expose
-    private String customData;
-    @SerializedName("height")
+    private String sourceIp;
+    @SerializedName("isRecordingSet")
     @Expose
-    private Integer height;
-    @SerializedName("id")
+    private Boolean isRecordingSet;
+    @SerializedName("isStreamManagerStream")
     @Expose
-    private String id;
-    @SerializedName("ingestChannel")
+    private Boolean isStreamManagerStream;
+    @SerializedName("isPublishedToVOD")
     @Expose
-    private String ingestChannel;
-    @SerializedName("length")
+    private Boolean isPublishedToVOD;
+    @SerializedName("isConnected")
     @Expose
-    private Integer length;
-    @SerializedName("preview")
+    private Boolean isConnected;
+    @SerializedName("isPTZEnabled")
     @Expose
-    private String preview;
-    @SerializedName("resourceUri")
+    private Boolean isPTZEnabled;
+    @SerializedName("ptzPollingInterval")
     @Expose
-    private String resourceUri;
-    @SerializedName("tags")
+    private Integer ptzPollingInterval;
+    @SerializedName("ptzPollingIntervalMinimum")
     @Expose
-    private List<Object> tags = null;
-    @SerializedName("title")
-    @Expose
-    private String title;
-    @SerializedName("type")
-    @Expose
-    private String type;
-    @SerializedName("width")
-    @Expose
-    private Integer width;
+    private Integer ptzPollingIntervalMinimum;
     @SerializedName("userId")
     @Expose
-    private String userId;
+    private Object userId;
     @SerializedName("liveId")
     @Expose
-    private String liveId;
+    private Object liveId;
     @SerializedName("userImage")
     @Expose
     private String userImage;
@@ -63,123 +54,99 @@ public class liveBean {
     @Expose
     private String liveUsers;
 
-    public String getAuthor() {
-        return author;
+    public String getApplicationInstance() {
+        return applicationInstance;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setApplicationInstance(String applicationInstance) {
+        this.applicationInstance = applicationInstance;
     }
 
-    public Integer getCreated() {
-        return created;
+    public String getName() {
+        return name;
     }
 
-    public void setCreated(Integer created) {
-        this.created = created;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCustomData() {
-        return customData;
+    public String getSourceIp() {
+        return sourceIp;
     }
 
-    public void setCustomData(String customData) {
-        this.customData = customData;
+    public void setSourceIp(String sourceIp) {
+        this.sourceIp = sourceIp;
     }
 
-    public Integer getHeight() {
-        return height;
+    public Boolean getIsRecordingSet() {
+        return isRecordingSet;
     }
 
-    public void setHeight(Integer height) {
-        this.height = height;
+    public void setIsRecordingSet(Boolean isRecordingSet) {
+        this.isRecordingSet = isRecordingSet;
     }
 
-    public String getId() {
-        return id;
+    public Boolean getIsStreamManagerStream() {
+        return isStreamManagerStream;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIsStreamManagerStream(Boolean isStreamManagerStream) {
+        this.isStreamManagerStream = isStreamManagerStream;
     }
 
-    public String getIngestChannel() {
-        return ingestChannel;
+    public Boolean getIsPublishedToVOD() {
+        return isPublishedToVOD;
     }
 
-    public void setIngestChannel(String ingestChannel) {
-        this.ingestChannel = ingestChannel;
+    public void setIsPublishedToVOD(Boolean isPublishedToVOD) {
+        this.isPublishedToVOD = isPublishedToVOD;
     }
 
-    public Integer getLength() {
-        return length;
+    public Boolean getIsConnected() {
+        return isConnected;
     }
 
-    public void setLength(Integer length) {
-        this.length = length;
+    public void setIsConnected(Boolean isConnected) {
+        this.isConnected = isConnected;
     }
 
-    public String getPreview() {
-        return preview;
+    public Boolean getIsPTZEnabled() {
+        return isPTZEnabled;
     }
 
-    public void setPreview(String preview) {
-        this.preview = preview;
+    public void setIsPTZEnabled(Boolean isPTZEnabled) {
+        this.isPTZEnabled = isPTZEnabled;
     }
 
-    public String getResourceUri() {
-        return resourceUri;
+    public Integer getPtzPollingInterval() {
+        return ptzPollingInterval;
     }
 
-    public void setResourceUri(String resourceUri) {
-        this.resourceUri = resourceUri;
+    public void setPtzPollingInterval(Integer ptzPollingInterval) {
+        this.ptzPollingInterval = ptzPollingInterval;
     }
 
-    public List<Object> getTags() {
-        return tags;
+    public Integer getPtzPollingIntervalMinimum() {
+        return ptzPollingIntervalMinimum;
     }
 
-    public void setTags(List<Object> tags) {
-        this.tags = tags;
+    public void setPtzPollingIntervalMinimum(Integer ptzPollingIntervalMinimum) {
+        this.ptzPollingIntervalMinimum = ptzPollingIntervalMinimum;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
-
-    public String getUserId() {
+    public Object getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Object userId) {
         this.userId = userId;
     }
 
-    public String getLiveId() {
+    public Object getLiveId() {
         return liveId;
     }
 
-    public void setLiveId(String liveId) {
+    public void setLiveId(Object liveId) {
         this.liveId = liveId;
     }
 

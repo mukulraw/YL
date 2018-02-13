@@ -229,6 +229,9 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     VideoView thumb;
 
 
+    Timer t;
+
+
     public static final String ACCOUNT_SID = "ACf9d0e5a1986b1e86724cb7fbb6129960";
     public static final String API_KEY_SID = "SK0494c286aa25e050354405aaa5fc8526";
     public static final String API_KEY_SECRET = "FyGiHq3n82IgHoZ3Dil6EiC4zlNu4Ybc";
@@ -245,7 +248,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         thumb = (VideoView)findViewById(R.id.thumbnail_video_view);
 
 
-        goCoder = WowzaGoCoder.init(this, "GOSK-A544-0103-01C9-96AE-1E94");
+        goCoder = WowzaGoCoder.init(this, "GOSK-C344-0103-177D-9E68-FCF9");
 
         playerLayout1 = (RelativeLayout)findViewById(R.id.player_layout1);
 
@@ -261,7 +264,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         goCoderBroadcaster = new WZBroadcast();
 
 // Create a configuration instance for the broadcaster
-        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_176x144);
+        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_640x480);
 
 // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
 
@@ -533,7 +536,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     goCoderBroadcastConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
                     goCoderBroadcastConfig.setPortNumber(1935);
                     goCoderBroadcastConfig.setApplicationName("live");
-                    goCoderBroadcastConfig.setStreamName(userId + "-" + liveId);
+                    goCoderBroadcastConfig.setStreamName(liveId);
 
 
                     WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
@@ -1116,7 +1119,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
         Log.d("hgfjhg", vid);
 
-        Timer t = new Timer();
+        t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -1477,6 +1480,17 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         }
 
 
+
+
+
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        t.cancel();
 
     }
 

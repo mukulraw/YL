@@ -167,7 +167,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     ImageButton follow;
 
-    WZPlayerView videoView;
+    VideoView videoView;
 
     RelativeLayout cameraLayout1 , cameraLayout2;
 
@@ -197,14 +197,14 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         setContentView(R.layout.activity_player);
 
 
-        goCoder = WowzaGoCoder.init(this, "GOSK-A544-0103-01C9-96AE-1E94");
+        goCoder = WowzaGoCoder.init(this, "GOSK-C344-0103-177D-9E68-FCF9");
 
 
         uri = getIntent().getStringExtra("uri");
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        videoView = (WZPlayerView)findViewById(R.id.video);
+        videoView = (VideoView) findViewById(R.id.video);
 
         cameraLayout1 = (RelativeLayout)findViewById(R.id.camera_layout1);
 
@@ -1544,14 +1544,18 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
 
-        wzPlayerConfig.setHostAddress("192.168.0.3");
+        wzPlayerConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
         wzPlayerConfig.setPortNumber(1935);
-        wzPlayerConfig.setApplicationName("youthlive");
+        wzPlayerConfig.setApplicationName("live");
         wzPlayerConfig.setStreamName(uri);
 
         //videoView.play();
 
-        videoView.play(wzPlayerConfig, new WZStatusCallback() {
+
+
+
+
+        /*videoView.play(wzPlayerConfig, new WZStatusCallback() {
             @Override
             public void onWZStatus(WZStatus wzStatus) {
 
@@ -1563,11 +1567,13 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             public void onWZError(WZStatus wzStatus) {
 
             }
-        });
+        });*/
 
-        //videoView.(Uri.parse(resourceUri));
-        //videoView.requestFocus();
-        //videoView.start();
+        String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
+
+        videoView.setVideoURI(Uri.parse(ur));
+        videoView.requestFocus();
+        videoView.start();
 
 
     }

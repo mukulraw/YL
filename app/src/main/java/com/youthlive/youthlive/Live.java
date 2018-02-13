@@ -49,7 +49,7 @@ public class Live extends Fragment {
     LiveAdapter2 adapter2;
     ProgressBar progress;
     List<wowzaAPIBean> list;
-    List<IncomingStream> list2;
+    List<liveBean> list2;
 
     @Nullable
     @Override
@@ -67,7 +67,7 @@ public class Live extends Fragment {
         adapter = new LiveAdapter(getContext(), list);
         adapter2 = new LiveAdapter2(getContext(), list2);
 
-        grid.setAdapter(adapter);
+        grid.setAdapter(adapter2);
         grid.setLayoutManager(manager);
 
         return view;
@@ -79,21 +79,23 @@ public class Live extends Fragment {
         super.onResume();
 
 
-        /*progress.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
 
         final bean b = (bean) getContext().getApplicationContext();
 
 
+/*
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
+*/
 
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(b.BASE_URL)
-                .client(okHttpClient)
+                //.client(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -107,34 +109,7 @@ public class Live extends Fragment {
             @Override
             public void onResponse(Call<List<liveBean>> call, Response<List<liveBean>> response) {
 
-                list2.clear();
-
-                try {
-
-                    for (int i = 0; i < response.body().size(); i++) {
-                        //if (!Objects.equals(response.body().get(i).getUserStatus(), "stopped")) {
-                            list2.add(response.body().get(i));
-                        //}
-                    }
-
-                    try {
-
-
-                        adapter2.setGridData(list2);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }catch (Exception e)
-                {
-
-                    Toast.makeText(getContext() , "Some Error Occurred, Please try again" , Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-
-                }
-
-
-
+                        adapter2.setGridData(response.body());
 
                 progress.setVisibility(View.GONE);
 
@@ -145,10 +120,10 @@ public class Live extends Fragment {
                 progress.setVisibility(View.GONE);
                 throwable.printStackTrace();
             }
-        });*/
+        });
 
 
-        progress.setVisibility(View.VISIBLE);
+        /*progress.setVisibility(View.VISIBLE);
 
 
 
@@ -212,7 +187,7 @@ public class Live extends Fragment {
 
             }
         });
-
+*/
 
 
 
@@ -222,14 +197,14 @@ public class Live extends Fragment {
     public class LiveAdapter2 extends RecyclerView.Adapter<LiveAdapter2.ViewHolder> {
 
         Context context;
-        List<IncomingStream> list = new ArrayList<>();
+        List<liveBean> list = new ArrayList<>();
 
-        public LiveAdapter2(Context context, List<IncomingStream> list) {
+        public LiveAdapter2(Context context, List<liveBean> list) {
             this.context = context;
             this.list = list;
         }
 
-        public void setGridData(List<IncomingStream> list) {
+        public void setGridData(List<liveBean> list) {
             this.list = list;
             notifyDataSetChanged();
         }
@@ -247,7 +222,7 @@ public class Live extends Fragment {
 
             holder.setIsRecyclable(false);
 
-            final IncomingStream item = list.get(position);
+            final liveBean item = list.get(position);
 
             //holder.title.setText(item.getTitle());
 
@@ -255,7 +230,7 @@ public class Live extends Fragment {
 
             //loader.displayImage(item.getUserImage() , holder.image);
 
-            //holder.viewCount.setText(item.getLiveUsers());
+            holder.viewCount.setText(item.getLiveUsers());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -268,8 +243,8 @@ public class Live extends Fragment {
 
                     Intent intent = new Intent(context, PlayerActivity.class);
                     intent.putExtra("uri", name);
-                    intent.putExtra("liveId", dd[1]);
-                    intent.putExtra("timelineId", dd[0]);
+                    intent.putExtra("liveId", name);
+                    intent.putExtra("timelineId", String.valueOf(item.getUserId()));
                     startActivity(intent);
 
                 }
