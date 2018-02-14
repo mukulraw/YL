@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,7 +38,10 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.games.Player;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.pedro.vlc.VlcListener;
+import com.pedro.vlc.VlcVideoLibrary;
 import com.veer.hiddenshot.HiddenShot;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
@@ -92,7 +96,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class PlayerActivity extends AppCompatActivity implements WZStatusCallback {
+public class PlayerActivity extends AppCompatActivity implements WZStatusCallback, VlcListener {
 
     RecyclerView grid;
     RecyclerView grid2;
@@ -191,6 +195,10 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     String key;
 
+    TextureVideoView surface;
+
+    //private VlcVideoLibrary vlcVideoLibrary;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,7 +212,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        videoView = (VideoView) findViewById(R.id.video);
+        surface = (TextureVideoView) findViewById(R.id.surface);
+
+        //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
 
         cameraLayout1 = (RelativeLayout)findViewById(R.id.camera_layout1);
 
@@ -1094,12 +1104,22 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     protected void onPause() {
         super.onPause();
         mOkHttpClient.dispatcher().cancelAll();
+
+        surface.pause();
+
         /*mVideoSurface = null;
         if (mBroadcastPlayer != null)
             mBroadcastPlayer.close();
         mBroadcastPlayer = null;*/
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        surface.stop();
+
+    }
 
     public void showGift(final int pos, String title) {
 
@@ -1273,6 +1293,20 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         });
     }
 
+    @Override
+    public void onComplete() {
+        Toast.makeText(this, "Playing", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError() {
+        //vlcVideoLibrary.stop();
+
+        surface.stop();
+
+    }
+
+
     public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.ViewHolder> {
 
         List<com.youthlive.youthlive.getIpdatedPOJO.View> list = new ArrayList<>();
@@ -1303,9 +1337,12 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
             final com.youthlive.youthlive.getIpdatedPOJO.View item = list.get(position);
 
+
+            DisplayImageOptions options = new DisplayImageOptions.Builder().cacheOnDisk(true).cacheInMemory(true).resetViewBeforeLoading(false).build();
+
             ImageLoader loader = ImageLoader.getInstance();
 
-            loader.displayImage(item.getUserImage(), holder.image);
+            loader.displayImage(item.getUserImage(), holder.image , options);
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -1542,13 +1579,13 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         mBroadcastPlayer.setSurfaceView(mVideoSurface);
         mBroadcastPlayer.load();*/
 
-        WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
+        /*WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
 
         wzPlayerConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
         wzPlayerConfig.setPortNumber(1935);
         wzPlayerConfig.setApplicationName("live");
         wzPlayerConfig.setStreamName(uri);
-
+*/
         //videoView.play();
 
 
@@ -1571,10 +1608,28 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
 
-        videoView.setVideoURI(Uri.parse(ur));
+        surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
+// Use `setDataSource` method to set data source, this could be url, assets folder or path
+        surface.setDataSource(ur);
+        surface.play();
+
+        //vlcVideoLibrary.play(ur);
+
+        /*videoView.setVideoURI(Uri.parse(ur));
         videoView.requestFocus();
+        videoView.setKeepScreenOn(true);
         videoView.start();
 
+        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+
+                Log.d("asdasd" , "video error");
+
+                return true;
+            }
+        });
+*/
 
     }
 

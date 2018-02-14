@@ -117,6 +117,8 @@ dependencies {
 
     compile 'uk.co.jakelee:vidsta:1.0.0'
 
+    compile 'com.github.pedroSG94.vlc-example-streamplayer:pedrovlc:2.5.14'
+
     compile 'com.payumoney.core:payumoney-sdk:7.1.0'
     compile 'com.payumoney.sdkui:plug-n-play:1.0.0'
 

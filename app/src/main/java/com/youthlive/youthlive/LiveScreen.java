@@ -49,6 +49,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.model.Circle;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.twilio.jwt.accesstoken.AccessToken;
 import com.twilio.jwt.accesstoken.VideoGrant;
@@ -334,14 +335,14 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
             }
         });
 
-/*
+
         switchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBroadcaster.switchCamera();
+                goCoderCameraView.switchCamera();
             }
         });
-*/
+
 
         //mBroadcaster.setAuthor(b.userImage);
         //mBroadcaster.setSendPosition(true);
@@ -374,14 +375,14 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                 } else if (goCoderBroadcaster.getStatus().isRunning()) {
                     // Stop the broadcast that is currently running
                     goCoderBroadcaster.endBroadcast(LiveScreen.this);
+                } else {
+                    // Start streaming
+                    goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, LiveScreen.this);
                 }
 
+                t.cancel();
 
-
-
-
-
-
+                finish();
 
 
 
@@ -749,9 +750,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
             final com.youthlive.youthlive.getIpdatedPOJO.View item = list.get(position);
 
+            DisplayImageOptions options = new DisplayImageOptions.Builder().cacheOnDisk(true).cacheInMemory(true).resetViewBeforeLoading(false).build();
+
             ImageLoader loader = ImageLoader.getInstance();
 
-            loader.displayImage(item.getUserImage(), holder.image);
+            loader.displayImage(item.getUserImage(), holder.image , options);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1208,7 +1211,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         Glide.with(getApplicationContext()).load(gfts[pos]).into(giftIcon);
         giftTitle.setText(title);
 
-        Timer t = new Timer();
+        final Timer t = new Timer();
 
         t.schedule(new TimerTask() {
             @Override
@@ -1220,6 +1223,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                         giftLayout.setVisibility(View.GONE);
                     }
                 });
+                t.cancel();
 
             }
         }, 2500);
@@ -1464,7 +1468,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
 
         WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
 
@@ -1480,6 +1484,9 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         }
 
 
+        t.cancel();
+
+        finish();
 
 
 

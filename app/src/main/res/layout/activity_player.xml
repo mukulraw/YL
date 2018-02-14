@@ -7,11 +7,10 @@
     android:background="#000000"
     tools:context="com.youthlive.youthlive.LiveScreen">
 
-    <VideoView
-        android:id="@+id/video"
+    <com.youthlive.youthlive.TextureVideoView
+        android:id="@+id/surface"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
 
