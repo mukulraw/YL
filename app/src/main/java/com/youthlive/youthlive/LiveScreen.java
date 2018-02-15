@@ -277,7 +277,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 // Designate the audio device as the audio broadcaster
         goCoderBroadcastConfig.setAudioBroadcaster(goCoderAudioDevice);
 
-        title = getIntent().getStringExtra("title");
+        //title = getIntent().getStringExtra("title");
 
 
         giftLayout = (LinearLayout) findViewById(R.id.gift_layout);
@@ -827,8 +827,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                 holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
+            DisplayImageOptions options = new DisplayImageOptions.Builder().cacheOnDisk(true).cacheInMemory(true).resetViewBeforeLoading(false).build();
+
             ImageLoader loader = ImageLoader.getInstance();
-            loader.displayImage(item.getUserImage(), holder.index);
+
+            loader.displayImage(item.getUserImage(), holder.index , options);
 
             final bean b = (bean) context.getApplicationContext();
 
@@ -986,15 +989,22 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                                         .build();
 
                                 // Serialize the token as a JWT
-                                //final String jwt = token.toJwt();
-                                //System.out.println(jwt);
 
-                                String toke = token.toString();
+                                try {
+                                    final String jwt = token.toJwt();
+                                    System.out.println(jwt);
 
-                                Log.d("token" , toke);
+                                    String toke = token.toString();
 
+                                    Log.d("token" , toke);
 
-                                connectToRoom(liveId , toke);
+                                    connectToRoom(liveId , toke);
+
+                                }catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
+
 
 
 
@@ -1200,7 +1210,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                 });
 
             }
-        }, 0, 2000);
+        }, 0, 1000);
 
     }
 

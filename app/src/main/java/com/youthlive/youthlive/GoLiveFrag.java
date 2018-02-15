@@ -24,7 +24,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class GoLiveFrag extends Fragment {
 
     Button goLive;
-    EditText title;
     CircleImageView profile;
 
     @Nullable
@@ -40,13 +39,13 @@ public class GoLiveFrag extends Fragment {
         goLive = (Button)view.findViewById(R.id.golive);
 
 
-        title = (EditText)view.findViewById(R.id.title);
+
 
         bean b = (bean)getContext().getApplicationContext();
 
         ImageLoader loader = ImageLoader.getInstance();
 
-        title.setText(b.userName + " is Live");
+
 
         loader.displayImage(b.userImage , profile);
 
@@ -55,7 +54,7 @@ public class GoLiveFrag extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext() , LiveScreen.class);
                 //Intent intent = new Intent(getContext() , IrisLive.class);
-                intent.putExtra("title" , title.getText().toString());
+                //intent.putExtra("title" , title.getText().toString());
                 startActivity(intent);
             }
         });

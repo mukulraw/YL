@@ -1417,8 +1417,11 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
                 holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
+            DisplayImageOptions options = new DisplayImageOptions.Builder().cacheOnDisk(true).cacheInMemory(true).resetViewBeforeLoading(false).build();
+
             ImageLoader loader = ImageLoader.getInstance();
-            loader.displayImage(item.getUserImage(), holder.index);
+
+            loader.displayImage(item.getUserImage(), holder.index , options);
 
 
             holder.user.setText(item.getUserName());
