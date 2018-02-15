@@ -233,9 +233,9 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     Timer t;
 
 
-    public static final String ACCOUNT_SID = "ACf9d0e5a1986b1e86724cb7fbb6129960";
-    public static final String API_KEY_SID = "SK0494c286aa25e050354405aaa5fc8526";
-    public static final String API_KEY_SECRET = "FyGiHq3n82IgHoZ3Dil6EiC4zlNu4Ybc";
+    public static final String ACCOUNT_SID = "AC325e3afb64517a3f8a99b2d1133f1b3d";
+    public static final String API_KEY_SID = "SKf2f5e0089874c68bb2e59cbb3b9155a2";
+    public static final String API_KEY_SECRET = "1js7fkFMjVfccKAKrOpfzOIf2Lvi4Esh";
     private boolean disconnectedFromOnDestroy;
     private String TAG = "ddfsdf";
 
