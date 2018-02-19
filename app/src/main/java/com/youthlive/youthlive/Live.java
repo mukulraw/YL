@@ -109,7 +109,7 @@ public class Live extends Fragment {
             @Override
             public void onResponse(Call<List<liveBean>> call, Response<List<liveBean>> response) {
 
-                        adapter2.setGridData(response.body());
+                adapter2.setGridData(response.body());
 
                 progress.setVisibility(View.GONE);
 
@@ -190,7 +190,6 @@ public class Live extends Fragment {
 */
 
 
-
     }
 
 
@@ -259,7 +258,7 @@ public class Live extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             ImageView image;
-            TextView title , viewCount;
+            TextView title, viewCount;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -333,7 +332,7 @@ public class Live extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             ImageView image;
-            TextView title , viewCount;
+            TextView title, viewCount;
 
             public ViewHolder(View itemView) {
                 super(itemView);

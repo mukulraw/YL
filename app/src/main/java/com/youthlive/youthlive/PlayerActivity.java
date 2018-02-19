@@ -35,13 +35,16 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
-
+import com.bambuser.broadcaster.BroadcastPlayer;
+import com.bambuser.broadcaster.PlayerState;
+import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.games.Player;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pedro.vlc.VlcListener;
 import com.pedro.vlc.VlcVideoLibrary;
+import com.twilio.twiml.Play;
 import com.veer.hiddenshot.HiddenShot;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
@@ -125,6 +128,8 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             R.drawable.gift6
     };
 
+    BroadcastPlayer mBroadcastPlayer;
+
     GiftAdapter gAdapter;
 
     String connId = "";
@@ -195,7 +200,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     String key;
 
-    TextureVideoView surface;
+    SurfaceViewWithAutoAR surface;
 
     //private VlcVideoLibrary vlcVideoLibrary;
 
@@ -212,7 +217,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        surface = (TextureVideoView) findViewById(R.id.surface);
+        surface = (SurfaceViewWithAutoAR) findViewById(R.id.surface);
 
         //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
 
@@ -1089,7 +1094,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     }
 
 
-    /*BroadcastPlayer.Observer mBroadcastPlayerObserver = new BroadcastPlayer.Observer() {
+    BroadcastPlayer.Observer mBroadcastPlayerObserver = new BroadcastPlayer.Observer() {
         @Override
         public void onStateChange(PlayerState playerState) {
             Toast.makeText(PlayerActivity.this, playerState.toString(), Toast.LENGTH_SHORT).show();
@@ -1098,26 +1103,26 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         @Override
         public void onBroadcastLoaded(boolean live, int width, int height) {
         }
-    };*/
+    };
 
     @Override
     protected void onPause() {
         super.onPause();
         mOkHttpClient.dispatcher().cancelAll();
 
-        surface.pause();
+        //surface.pause();
 
-        /*mVideoSurface = null;
+        surface = null;
         if (mBroadcastPlayer != null)
             mBroadcastPlayer.close();
-        mBroadcastPlayer = null;*/
+        surface = null;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        surface.stop();
+        //surface.stop();
 
     }
 
@@ -1302,7 +1307,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     public void onError() {
         //vlcVideoLibrary.stop();
 
-        surface.stop();
+        //surface.stop();
 
     }
 
@@ -1569,18 +1574,23 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             //   mPlayerStatusTextView.setText("Could not get info about latest broadcast");
             return;
         }
-        /*if (mVideoSurface == null) {
+        if (surface == null) {
             // UI no longer active
             return;
         }
 
         if (mBroadcastPlayer != null)
             mBroadcastPlayer.close();
-        mBroadcastPlayer = new BroadcastPlayer(this, resourceUri, APPLICATION_ID, mBroadcastPlayerObserver);
+
+        String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
+
+        Log.d("url" , ur);
+
+        mBroadcastPlayer = new BroadcastPlayer(this, ur, APPLICATION_ID, mBroadcastPlayerObserver);
 
 
-        mBroadcastPlayer.setSurfaceView(mVideoSurface);
-        mBroadcastPlayer.load();*/
+        mBroadcastPlayer.setSurfaceView(surface);
+        mBroadcastPlayer.load();
 
         /*WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
 
@@ -1609,12 +1619,11 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });*/
 
-        String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
 
-        surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
+        //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
 // Use `setDataSource` method to set data source, this could be url, assets folder or path
-        surface.setDataSource(ur);
-        surface.play();
+        //surface.setDataSource(ur);
+        //surface.play();
 
         //vlcVideoLibrary.play(ur);
 

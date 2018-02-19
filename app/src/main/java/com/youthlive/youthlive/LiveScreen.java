@@ -219,7 +219,6 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     ImageView giftIcon;
     TextView giftTitle;
 
-    ProgressDialog progressDialog;
 
     RelativeLayout playerLayout1;
 
@@ -494,18 +493,12 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         }, 3000);*/
 
 
-        progressDialog = new ProgressDialog(LiveScreen.this);
-
-        progressDialog.setMessage("Starting Stream...");
-
-        progressDialog.setCancelable(false);
-
-        progressDialog.show();
 
 
 
 
-        //progress.setVisibility(View.VISIBLE);
+
+        progress.setVisibility(View.VISIBLE);
 
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -553,7 +546,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     }
 
 
-                    progressDialog.dismiss();
+
 
 
                     schedule(liveId);
@@ -563,13 +556,13 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     finish();
                 }
 
-                //progress.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
 
             }
 
             @Override
             public void onFailure(Call<goLiveBean> call, Throwable t) {
-                //progress.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
             }
         });
 
@@ -632,7 +625,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
                             //progress.setVisibility(View.GONE);
 
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
 
 
 
