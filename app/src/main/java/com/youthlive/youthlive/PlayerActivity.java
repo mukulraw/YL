@@ -37,6 +37,20 @@ import android.widget.VideoView;
 
 
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.games.Player;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -195,7 +209,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     String key;
 
-    TextureVideoView surface;
+
+    private RtmpDataSourceFactory rtmpDataSourceFactory;
+    private SimpleExoPlayer player;
 
     //private VlcVideoLibrary vlcVideoLibrary;
 
@@ -212,7 +228,25 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        surface = (TextureVideoView) findViewById(R.id.surface);
+        //surface = (TextureVideoView) findViewById(R.id.surface);
+
+
+
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
+        player =
+                ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+        SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
+
+        simpleExoPlayerView.setPlayer(player);
+
+
+        simpleExoPlayerView.setUseController(false);
+
 
         //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
 
@@ -1105,7 +1139,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         super.onPause();
         mOkHttpClient.dispatcher().cancelAll();
 
-        surface.pause();
+        //surface.pause();
+
+
 
         /*mVideoSurface = null;
         if (mBroadcastPlayer != null)
@@ -1117,7 +1153,8 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     protected void onStop() {
         super.onStop();
 
-        surface.stop();
+        //surface.stop();
+        player.stop();
 
     }
 
@@ -1302,7 +1339,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     public void onError() {
         //vlcVideoLibrary.stop();
 
-        surface.stop();
+        //surface.stop();
+
+        player.stop();
 
     }
 
@@ -1609,12 +1648,25 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });*/
 
-        String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
+        String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
 
-        surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
+        //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
 // Use `setDataSource` method to set data source, this could be url, assets folder or path
-        surface.setDataSource(ur);
-        surface.play();
+        //surface.setDataSource(ur);
+        //surface.play();
+
+
+
+        rtmpDataSourceFactory = new RtmpDataSourceFactory();
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
+                rtmpDataSourceFactory, extractorsFactory, null, null);
+
+        player.prepare(videoSource);
+
+        player.setPlayWhenReady(true);
+
+
 
         //vlcVideoLibrary.play(ur);
 

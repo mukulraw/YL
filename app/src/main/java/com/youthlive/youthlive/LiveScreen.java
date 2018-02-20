@@ -265,7 +265,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         goCoderBroadcaster = new WZBroadcast();
 
 // Create a configuration instance for the broadcaster
-        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_640x480);
+        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_320x240);
 
 // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
 
