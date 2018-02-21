@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.youthlive.youthlive.Activitys.Videocomment_Activity;
 import com.youthlive.youthlive.vlogListPOJO.Datum;
@@ -51,8 +52,15 @@ public class HotAdapter extends RecyclerView.Adapter<HotAdapter.MyViewHolder> {
         final Datum item = list.get(position);
         holder.title.setText(item.getTimelineName());
         holder.likes.setText(item.getLikesCount());
-        Glide.with(context).load(item.getTimelineProfileImage()).into(holder.profile);
-        Glide.with(context).load(item.getVideoURL()).into(holder.image);
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).resetViewBeforeLoading(false).build();
+
+        ImageLoader loader = ImageLoader.getInstance();
+        loader.displayImage(item.getTimelineProfileImage() , holder.profile , options);
+
+
+        //Glide.with(context).load(item.getTimelineProfileImage()).into(holder.profile);
+        //Glide.with(context).load(item.getVideoURL()).into(holder.image);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
