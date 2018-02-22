@@ -126,6 +126,7 @@ public class MyVLOGs extends Fragment {
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
+            holder.setIsRecyclable(false);
             final Datum item = list.get(position);
             holder.likes.setText(item.getLikesCount());
 

@@ -510,6 +510,8 @@ public class SingleVideoActivity extends AppCompatActivity {
                     likes.setText(response.body().getData().getLikesCount());
                     comments.setText(response.body().getData().getCommentCount());
 
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
