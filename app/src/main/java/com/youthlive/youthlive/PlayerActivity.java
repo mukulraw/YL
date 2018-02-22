@@ -35,16 +35,27 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
-import com.bambuser.broadcaster.BroadcastPlayer;
-import com.bambuser.broadcaster.PlayerState;
-import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
+
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.games.Player;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pedro.vlc.VlcListener;
 import com.pedro.vlc.VlcVideoLibrary;
-import com.twilio.twiml.Play;
 import com.veer.hiddenshot.HiddenShot;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
@@ -128,8 +139,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             R.drawable.gift6
     };
 
-    BroadcastPlayer mBroadcastPlayer;
-
     GiftAdapter gAdapter;
 
     String connId = "";
@@ -200,7 +209,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     String key;
 
-    SurfaceViewWithAutoAR surface;
+
+    private RtmpDataSourceFactory rtmpDataSourceFactory;
+    private SimpleExoPlayer player;
 
     //private VlcVideoLibrary vlcVideoLibrary;
 
@@ -217,7 +228,25 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
-        surface = (SurfaceViewWithAutoAR) findViewById(R.id.surface);
+        //surface = (TextureVideoView) findViewById(R.id.surface);
+
+
+
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
+        player =
+                ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+        SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
+
+        simpleExoPlayerView.setPlayer(player);
+
+
+        simpleExoPlayerView.setUseController(false);
+
 
         //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
 
@@ -1094,7 +1123,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     }
 
 
-    BroadcastPlayer.Observer mBroadcastPlayerObserver = new BroadcastPlayer.Observer() {
+    /*BroadcastPlayer.Observer mBroadcastPlayerObserver = new BroadcastPlayer.Observer() {
         @Override
         public void onStateChange(PlayerState playerState) {
             Toast.makeText(PlayerActivity.this, playerState.toString(), Toast.LENGTH_SHORT).show();
@@ -1103,7 +1132,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         @Override
         public void onBroadcastLoaded(boolean live, int width, int height) {
         }
-    };
+    };*/
 
     @Override
     protected void onPause() {
@@ -1112,10 +1141,12 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         //surface.pause();
 
-        surface = null;
+
+
+        /*mVideoSurface = null;
         if (mBroadcastPlayer != null)
             mBroadcastPlayer.close();
-        surface = null;
+        mBroadcastPlayer = null;*/
     }
 
     @Override
@@ -1123,6 +1154,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         super.onStop();
 
         //surface.stop();
+        player.stop();
 
     }
 
@@ -1308,6 +1340,8 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         //vlcVideoLibrary.stop();
 
         //surface.stop();
+
+        player.stop();
 
     }
 
@@ -1574,23 +1608,18 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             //   mPlayerStatusTextView.setText("Could not get info about latest broadcast");
             return;
         }
-        if (surface == null) {
+        /*if (mVideoSurface == null) {
             // UI no longer active
             return;
         }
 
         if (mBroadcastPlayer != null)
             mBroadcastPlayer.close();
-
-        String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
-
-        Log.d("url" , ur);
-
-        mBroadcastPlayer = new BroadcastPlayer(this, ur, APPLICATION_ID, mBroadcastPlayerObserver);
+        mBroadcastPlayer = new BroadcastPlayer(this, resourceUri, APPLICATION_ID, mBroadcastPlayerObserver);
 
 
-        mBroadcastPlayer.setSurfaceView(surface);
-        mBroadcastPlayer.load();
+        mBroadcastPlayer.setSurfaceView(mVideoSurface);
+        mBroadcastPlayer.load();*/
 
         /*WZPlayerConfig wzPlayerConfig = new WZPlayerConfig();
 
@@ -1619,11 +1648,25 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });*/
 
+        String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
 
         //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
 // Use `setDataSource` method to set data source, this could be url, assets folder or path
         //surface.setDataSource(ur);
         //surface.play();
+
+
+
+        rtmpDataSourceFactory = new RtmpDataSourceFactory();
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
+                rtmpDataSourceFactory, extractorsFactory, null, null);
+
+        player.prepare(videoSource);
+
+        player.setPlayWhenReady(true);
+
+
 
         //vlcVideoLibrary.play(ur);
 
@@ -1763,7 +1806,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
                             progress.setVisibility(View.GONE);
                         }
                     });
-
+\
                 }
             });*/
 

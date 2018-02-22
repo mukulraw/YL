@@ -29,13 +29,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
-import com.bambuser.broadcaster.BroadcastPlayer;
-import com.bambuser.broadcaster.BroadcastStatus;
-import com.bambuser.broadcaster.Broadcaster;
-import com.bambuser.broadcaster.CameraError;
-import com.bambuser.broadcaster.ConnectionError;
-import com.bambuser.broadcaster.PlayerState;
-import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
+
 import com.bumptech.glide.Glide;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.veer.hiddenshot.HiddenShot;
@@ -77,7 +71,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class IrisPlayer extends AppCompatActivity {
 
 
-    RecyclerView grid;
+    /*RecyclerView grid;
     RecyclerView grid2;
     LinearLayoutManager manager;
     LiveAdapter adapter;
@@ -165,7 +159,7 @@ public class IrisPlayer extends AppCompatActivity {
     private static final String API_KEY = "7egiel2r2frgwoe9nwnx3p1n1";
 
 
-    String key;
+    String key;*/
 
 
     @Override
@@ -173,7 +167,7 @@ public class IrisPlayer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iris_player);
 
-        uri = getIntent().getStringExtra("uri");
+        /*uri = getIntent().getStringExtra("uri");
         liveId = getIntent().getStringExtra("liveId");
         timelineId = getIntent().getStringExtra("timelineId");
 
@@ -643,12 +637,12 @@ public class IrisPlayer extends AppCompatActivity {
                 });
 
             }
-        });
+        });*/
 
     }
 
 
-    public void schedule(final String vid) {
+    /*public void schedule(final String vid) {
 
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
@@ -1351,7 +1345,7 @@ public class IrisPlayer extends AppCompatActivity {
                 }
             });
 
-            /*holder.send.setOnClickListener(new View.OnClickListener() {
+            *//*holder.send.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -1387,7 +1381,7 @@ public class IrisPlayer extends AppCompatActivity {
                     });
 
                 }
-            });*/
+            });*//*
 
 
         }
@@ -1414,6 +1408,6 @@ public class IrisPlayer extends AppCompatActivity {
         }
 
     }
-
+*/
 
 }

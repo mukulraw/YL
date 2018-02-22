@@ -7,8 +7,9 @@
     android:background="#000000"
     tools:context="com.youthlive.youthlive.LiveScreen">
 
-    <com.bambuser.broadcaster.SurfaceViewWithAutoAR
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/surface"
+        app:resize_mode="fill"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
@@ -177,11 +178,11 @@
                         android:id="@+id/camera_layout1"
                         >
 
-                    <com.wowza.gocoder.sdk.api.devices.WZCameraView
-                        android:layout_width="100dp"
-                        android:layout_height="150dp"
-                        android:id="@+id/camera1"
-                        />
+                        <com.wowza.gocoder.sdk.api.devices.WZCameraView
+                            android:layout_width="100dp"
+                            android:layout_height="150dp"
+                            android:id="@+id/camera1"
+                            />
 
 
                         <ImageButton

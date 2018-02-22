@@ -461,7 +461,7 @@
         android:layout_width="100dp"
         android:layout_height="150dp"
         android:layout_marginTop="140dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="15dp"
@@ -486,6 +486,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:id="@+id/accept1"
+            android:visibility="gone"
             android:background="@drawable/accept"
             />
 
@@ -497,6 +498,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="15dp"
+            android:visibility="gone"
             android:background="@drawable/reject"
             />
 

@@ -264,7 +264,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         goCoderBroadcaster = new WZBroadcast();
 
 // Create a configuration instance for the broadcaster
-        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_640x480);
+        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_320x240);
 
 // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
 
@@ -330,7 +330,6 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     chat.setVisibility(View.VISIBLE);
                 }
 
-
             }
         });
 
@@ -379,7 +378,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, LiveScreen.this);
                 }
 
-                t.cancel();
+                if (t != null)
+                {
+                    t.cancel();
+                }
+
 
                 finish();
 
@@ -547,6 +550,8 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
 
+                    connectToRoom("123" , "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4LTE1MTkyOTYyODYiLCJpc3MiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4Iiwic3ViIjoiQUNmOWQwZTVhMTk4NmIxZTg2NzI0Y2I3ZmJiNjEyOTk2MCIsImV4cCI6MTUxOTI5OTg4NiwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiY2xpZW50MiIsInZpZGVvIjp7InJvb20iOiIxMjMifX19.ULAQN_l_H1iEqNHM1-iNWWlk_ACs71zR1oiQDl0SGew");
+
 
 
                     schedule(liveId);
@@ -635,7 +640,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
 
-                            t.cancel();
+                            if (t != null)
+                            {
+                                t.cancel();
+                            }
+
 
 
                         }
@@ -991,7 +1000,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
                                     Log.d("token" , toke);
 
-                                    connectToRoom(liveId , toke);
+                                   // connectToRoom(liveId , toke);
 
                                 }catch (Exception e)
                                 {
@@ -1082,7 +1091,8 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     .audioTracks(Collections.singletonList(localAudioTrack));
         }
 
-        cameraCapturerCompat = new CameraCapturerCompat(this, getAvailableCameraSource());
+        //cameraCapturerCompat = new CameraCapturerCompat(this, getAvailableCameraSource());
+        cameraCapturerCompat = new CameraCapturerCompat(this, CameraCapturer.CameraSource.BACK_CAMERA);
 
         if (localVideoTrack == null) {
             localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturerCompat.getVideoCapturer());
@@ -1211,7 +1221,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
         giftLayout.setVisibility(View.VISIBLE);
 
-        Glide.with(getApplicationContext()).load(gfts[pos]).into(giftIcon);
+        Glide.with(getApplicationContext()).load(gfts[pos - 1]).into(giftIcon);
         giftTitle.setText(title);
 
         final Timer t = new Timer();
@@ -1226,7 +1236,13 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                         giftLayout.setVisibility(View.GONE);
                     }
                 });
-                t.cancel();
+
+                if (t != null)
+                {
+                    t.cancel();
+                }
+
+
 
             }
         }, 2500);
@@ -1487,7 +1503,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         }
 
 
-        t.cancel();
+        if (t != null)
+        {
+            t.cancel();
+        }
+
 
         finish();
 
@@ -1500,7 +1520,11 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     protected void onStop() {
         super.onStop();
 
-        t.cancel();
+        if (t != null)
+        {
+            t.cancel();
+        }
+
 
     }
 
