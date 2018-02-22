@@ -120,6 +120,6 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r2.5.1'
     compile 'com.google.android.exoplayer:extension-rtmp:r2.5.1'
 
-    implementation project(':streamaxia-opensdk')
+    //implementation project(':streamaxia-opensdk')
 }
 apply plugin: 'com.google.gms.google-services'
