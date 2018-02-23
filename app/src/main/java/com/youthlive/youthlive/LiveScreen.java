@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -48,6 +49,20 @@ import com.android.volley.toolbox.Volley;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.maps.model.Circle;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -78,6 +93,7 @@ import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
 import com.yasic.bubbleview.BubbleView;
 import com.youthlive.youthlive.INTERFACE.AllAPIs;
+import com.youthlive.youthlive.checkStatusPOJO.checkStatusBean;
 import com.youthlive.youthlive.commentPOJO.commentBean;
 import com.youthlive.youthlive.followPOJO.followBean;
 import com.youthlive.youthlive.getIpdatedPOJO.Comment;
@@ -129,6 +145,8 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
     //Toast toast;
 
+
+
     private LocalVideoTrack localVideoTrack;
 
     private LocalAudioTrack localAudioTrack;
@@ -178,6 +196,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     // The broadcast configuration settings
     private WZBroadcastConfig goCoderBroadcastConfig;
 
+    String connId;
 
     ProgressBar progress;
 
@@ -195,6 +214,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     int count = 0;
 
     TextView viewCount;
+
 
     Integer[] gfts = {
             R.drawable.gift1,
@@ -226,10 +246,15 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     String sid = "";
 
 
-    VideoView thumb;
+    SimpleExoPlayerView thumb;
 
 
     Timer t;
+
+
+
+
+
 
 
     public static final String ACCOUNT_SID = "AC325e3afb64517a3f8a99b2d1133f1b3d";
@@ -239,13 +264,17 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     private String TAG = "ddfsdf";
 
 
+    private RtmpDataSourceFactory rtmpDataSourceFactory;
+    private SimpleExoPlayer player;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_screen);
 
 
-        thumb = (VideoView)findViewById(R.id.thumbnail_video_view);
+        thumb = (SimpleExoPlayerView)findViewById(R.id.thumbnail_video_view);
 
 
         goCoder = WowzaGoCoder.init(this, "GOSK-C344-0103-177D-9E68-FCF9");
@@ -550,7 +579,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
 
-                    connectToRoom("123" , "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4LTE1MTkyOTYyODYiLCJpc3MiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4Iiwic3ViIjoiQUNmOWQwZTVhMTk4NmIxZTg2NzI0Y2I3ZmJiNjEyOTk2MCIsImV4cCI6MTUxOTI5OTg4NiwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiY2xpZW50MiIsInZpZGVvIjp7InJvb20iOiIxMjMifX19.ULAQN_l_H1iEqNHM1-iNWWlk_ACs71zR1oiQDl0SGew");
+                    //connectToRoom("123" , "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4LTE1MTkyOTYyODYiLCJpc3MiOiJTSzM2NDRiMWZmNjkwYTM1Y2ZjOGZiNTFmYWYyMWI0NTY4Iiwic3ViIjoiQUNmOWQwZTVhMTk4NmIxZTg2NzI0Y2I3ZmJiNjEyOTk2MCIsImV4cCI6MTUxOTI5OTg4NiwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiY2xpZW50MiIsInZpZGVvIjp7InJvb20iOiIxMjMifX19.ULAQN_l_H1iEqNHM1-iNWWlk_ACs71zR1oiQDl0SGew");
 
 
 
@@ -934,12 +963,6 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
 
-
-
-
-
-                            if (sid.length() > 0)
-                            {
                                 progress.setVisibility(View.VISIBLE);
 
                                 final bean b = (bean) context.getApplicationContext();
@@ -974,61 +997,6 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                                         progress.setVisibility(View.GONE);
                                     }
                                 });
-                            }
-                            else
-                            {
-
-                                final VideoGrant grant = new VideoGrant();
-                                grant.setRoom(liveId);
-
-                                // Create an Access Token
-
-
-
-                                final AccessToken token = new AccessToken.Builder(ACCOUNT_SID, API_KEY_SID, API_KEY_SECRET)
-                                        .identity(b.userId) // Set the Identity of this token
-                                        .grant(grant) // Grant access to Video
-                                        .build();
-
-                                // Serialize the token as a JWT
-
-                                try {
-                                    final String jwt = token.toJwt();
-                                    System.out.println(jwt);
-
-                                    String toke = token.toString();
-
-                                    Log.d("token" , toke);
-
-                                   // connectToRoom(liveId , toke);
-
-                                }catch (Exception e)
-                                {
-                                    e.printStackTrace();
-                                }
-
-
-
-
-
-
-                            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1149,6 +1117,90 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                         .build();
 
                 final AllAPIs cr = retrofit.create(AllAPIs.class);
+
+
+                Call<checkStatusBean> call1 = cr.checkStatus(b.userId , liveId);
+                call1.enqueue(new Callback<checkStatusBean>() {
+                    @Override
+                    public void onResponse(Call<checkStatusBean> call, retrofit2.Response<checkStatusBean> response) {
+
+
+                        try {
+
+
+                            connId = response.body().getData().get(0).getId();
+
+                            Log.d("conId" , connId);
+
+                            if (connId.length() > 0)
+                            {
+
+                                BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+                                TrackSelection.Factory videoTrackSelectionFactory =
+                                        new AdaptiveTrackSelection.Factory(bandwidthMeter);
+                                TrackSelector trackSelector =
+                                        new DefaultTrackSelector(videoTrackSelectionFactory);
+
+
+
+                                Log.d("entered" , "entered");
+
+
+
+                                player = ExoPlayerFactory.newSimpleInstance(LiveScreen.this , trackSelector);
+
+                                SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
+
+                                simpleExoPlayerView.setPlayer(player);
+
+
+                                simpleExoPlayerView.setUseController(false);
+
+
+                                String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/sublive/" + response.body().getData().get(0).getUrl();
+
+                                //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
+// Use `setDataSource` method to set data source, this could be url, assets folder or path
+                                //surface.setDataSource(ur);
+                                //surface.play();
+
+                                rtmpDataSourceFactory = new RtmpDataSourceFactory();
+
+                                ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+                                MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
+                                        rtmpDataSourceFactory, extractorsFactory, null, null);
+
+
+                                player.prepare(videoSource);
+
+                                player.setPlayWhenReady(true);
+
+
+                            }
+
+
+                        }catch (Exception e)
+                        {
+                            e.printStackTrace();
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<checkStatusBean> call, Throwable t) {
+
+                        Log.d("error" , t.toString());
+
+                    }
+                });
+
+
+
+
+
+
 
 
                 Call<getUpdatedBean> call = cr.getUpdatedData(b.userId, vid);
@@ -1339,7 +1391,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     private void addParticipantVideo(VideoTrack videoTrack) {
         //moveLocalVideoToThumbnailView();
         //primaryVideoView.setMirror(false);
-        videoTrack.addRenderer(thumb);
+        //videoTrack.addRenderer(thumb);
     }
 
     private Participant.Listener participantListener() {

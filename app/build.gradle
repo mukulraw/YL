@@ -116,10 +116,9 @@ dependencies {
     //compile 'com.twilio:client-android:1.2.21'
     compile 'com.twilio.sdk:twilio:7.14.0'
     testCompile 'junit:junit:4.12'
-
     compile 'com.google.android.exoplayer:exoplayer:r2.5.1'
     compile 'com.google.android.exoplayer:extension-rtmp:r2.5.1'
-
     //implementation project(':streamaxia-opensdk')
+    implementation project(':libbambuser-0.9.12')
 }
 apply plugin: 'com.google.gms.google-services'

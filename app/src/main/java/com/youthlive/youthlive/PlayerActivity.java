@@ -35,10 +35,14 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
-
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -51,6 +55,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.games.Player;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -187,9 +192,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
     VideoView videoView;
 
-    RelativeLayout cameraLayout1 , cameraLayout2;
+    RelativeLayout cameraLayout1, cameraLayout2;
 
-    ImageButton accept1 , accept2 , reject1 , reject2 , reject3;
+    ImageButton accept1, accept2, reject1, reject2, reject3;
 
     private static final String APPLICATION_ID = "gA1JdKySejF0GfA0ChIvVA";
     private static final String API_KEY = "2v7690nbz6xc4vshnuc2a7yyg";
@@ -231,14 +236,18 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         //surface = (TextureVideoView) findViewById(R.id.surface);
 
 
-
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        player =
-                ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+
+
+
+
+
+        player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
 
         SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
 
@@ -250,10 +259,12 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
 
-        cameraLayout1 = (RelativeLayout)findViewById(R.id.camera_layout1);
+        cameraLayout1 = (RelativeLayout) findViewById(R.id.camera_layout1);
 
 
-        goCoderCameraView = (WZCameraView) findViewById(R.id.camera_preview);
+        goCoderCameraView = (WZCameraView) findViewById(R.id.camera1);
+
+        goCoderCameraView.setZOrderOnTop(true);
 
         goCoderAudioDevice = new WZAudioDevice();
 
@@ -261,7 +272,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         goCoderBroadcaster = new WZBroadcast();
 
 // Create a configuration instance for the broadcaster
-        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_1920x1080);
+        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_176x144);
 
 // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
 
@@ -269,6 +280,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
 // Designate the camera preview as the video source
         goCoderBroadcastConfig.setVideoBroadcaster(goCoderCameraView);
+
+
+        goCoderCameraView.startPreview();
 
 // Designate the audio device as the audio broadcaster
         goCoderBroadcastConfig.setAudioBroadcaster(goCoderAudioDevice);
@@ -283,11 +297,11 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         //progressDialog.show();
 
 
-        accept1 = (ImageButton)findViewById(R.id.accept1);
+        accept1 = (ImageButton) findViewById(R.id.accept1);
 
 
-        reject1 = (ImageButton)findViewById(R.id.reject1);
-        reject3 = (ImageButton)findViewById(R.id.reject3);
+        reject1 = (ImageButton) findViewById(R.id.reject1);
+        reject3 = (ImageButton) findViewById(R.id.reject3);
 
 
         follow = (ImageButton) findViewById(R.id.follow);
@@ -348,6 +362,13 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             @Override
             public void onClick(View view) {
                 //mBroadcaster.stopBroadcast();
+
+                if (goCoderBroadcaster.getStatus().isRunning())
+                {
+                    goCoderBroadcaster.endBroadcast();
+                }
+
+
                 finish();
             }
         });
@@ -452,8 +473,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             public void onClick(View view) {
 
 
-
-
                 WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
 
 
@@ -462,59 +481,12 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
                 } else if (goCoderBroadcaster.getStatus().isRunning()) {
                     // Stop the broadcast that is currently running
                     goCoderBroadcaster.endBroadcast(PlayerActivity.this);
+                    cameraLayout1.setVisibility(View.GONE);
+
                 } else {
                     // Start streaming
                     goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, PlayerActivity.this);
                 }
-
-
-                final ProgressDialog pd = new ProgressDialog(PlayerActivity.this);
-
-                pd.setMessage("Stopping Stream");
-                pd.setCancelable(false);
-                pd.show();
-
-                final Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://api.cloud.wowza.com/")
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                final AllAPIs cr = retrofit.create(AllAPIs.class);
-
-
-
-                retrofit2.Call<startStreamBean> call2 = cr.stopStream(key);
-
-                //Log.d("startId", key);
-
-                call2.enqueue(new retrofit2.Callback<startStreamBean>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<startStreamBean> call, retrofit2.Response<startStreamBean> response) {
-
-                        pd.dismiss();
-
-                        //toast.setText(response.body().getLiveStream().getState());
-                        //Toast.makeText(LiveScreen.this, response.body().getLiveStream().getState(), Toast.LENGTH_SHORT).show();
-
-                        //toast.show();
-                        //finish();
-
-
-                        cameraLayout1.setVisibility(View.GONE);
-
-
-                    }
-
-                    @Override
-                    public void onFailure(retrofit2.Call<startStreamBean> call, Throwable t) {
-                        progress.setVisibility(View.GONE);
-
-                    }
-                });
-
-
-
 
 
             }
@@ -525,71 +497,66 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             @Override
             public void onClick(View view) {
 
+                final bean b = (bean) getApplicationContext();
+
+
+                progress.setVisibility(View.VISIBLE);
+
+
 
                 final Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://api.cloud.wowza.com/")
+                        .baseUrl(b.BASE_URL)
                         .addConverterFactory(ScalarsConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
                 final AllAPIs cr = retrofit.create(AllAPIs.class);
 
-                streamBean bosy = new streamBean();
-                LiveStream stream = new LiveStream();
-                stream.setName("asdasd");
-                bosy.setLiveStream(stream);
-
-                retrofit2.Call<streamResponseBean> call = cr.createStream(bosy);
-
-                call.enqueue(new retrofit2.Callback<streamResponseBean>() {
+                retrofit2.Call<acceptRejectBean> call1 = cr.acceptReject(connId, liveId + "-" + b.userId, "2");
+                call1.enqueue(new retrofit2.Callback<acceptRejectBean>() {
                     @Override
-                    public void onResponse(retrofit2.Call<streamResponseBean> call, retrofit2.Response<streamResponseBean> response) {
+                    public void onResponse(retrofit2.Call<acceptRejectBean> call, retrofit2.Response<acceptRejectBean> response) {
 
-                        final String host = response.body().getLiveStream().getSourceConnectionInformation().getPrimaryServer();
-                        final String port = String.valueOf(response.body().getLiveStream().getSourceConnectionInformation().getHostPort());
-                        final String appName = response.body().getLiveStream().getSourceConnectionInformation().getApplication();
-                        final String streamName = response.body().getLiveStream().getSourceConnectionInformation().getStreamName();
-
-                        final String url = response.body().getLiveStream().getPlayerHlsPlaybackUrl();
-
-                        key = response.body().getLiveStream().getId();
-
-                        retrofit2.Call<startStreamBean> call2 = cr.startStream(key);
-
-                        //Log.d("startId", key);
-
-                        call2.enqueue(new retrofit2.Callback<startStreamBean>() {
-                            @Override
-                            public void onResponse(retrofit2.Call<startStreamBean> call, retrofit2.Response<startStreamBean> response) {
-
-                                Log.d("status", response.body().getLiveStream().getState());
-                                //Toast.makeText(LiveScreen.this, response.body().getLiveStream().getState(), Toast.LENGTH_SHORT).show();
-
-                                //toast.setText(response.body().getLiveStream().getState());
-                                // toast.show();
-
-                                checkStatus(key, host, port, appName, streamName , url);
+                        try {
+                            //cameraLayout1.setVisibility(View.VISIBLE);
 
 
-                            }
-
-                            @Override
-                            public void onFailure(retrofit2.Call<startStreamBean> call, Throwable t) {
-                                progress.setVisibility(View.GONE);
-
-                            }
-                        });
+                            goCoderBroadcastConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
+                            goCoderBroadcastConfig.setPortNumber(1935);
+                            goCoderBroadcastConfig.setApplicationName("sublive");
+                            goCoderBroadcastConfig.setStreamName(liveId + "-" + b.userId);
 
 
+                            WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
+
+                            //if (configValidationError != null) {
+                                //Toast.makeText(LiveScreen.this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
+                            //} else if (goCoderBroadcaster.getStatus().isRunning()) {
+                                // Stop the broadcast that is currently running
+                            //    goCoderBroadcaster.endBroadcast(PlayerActivity.this);
+                            //} else {
+                                // Start streaming
+                                goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, PlayerActivity.this);
+                            //}
+
+
+                            accept1.setVisibility(View.GONE);
+                            reject1.setVisibility(View.GONE);
+                            reject3.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                        progress.setVisibility(View.GONE);
                     }
 
                     @Override
-                    public void onFailure(retrofit2.Call<streamResponseBean> call, Throwable t) {
+                    public void onFailure(retrofit2.Call<acceptRejectBean> call, Throwable t) {
                         progress.setVisibility(View.GONE);
                         t.printStackTrace();
                     }
                 });
-
 
 
             }
@@ -614,19 +581,16 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
                 final AllAPIs cr = retrofit.create(AllAPIs.class);
 
 
-                retrofit2.Call<acceptRejectBean> call = cr.acceptReject(connId , "" , "1");
+                retrofit2.Call<acceptRejectBean> call = cr.acceptReject(connId, "", "1");
                 call.enqueue(new retrofit2.Callback<acceptRejectBean>() {
                     @Override
                     public void onResponse(retrofit2.Call<acceptRejectBean> call, retrofit2.Response<acceptRejectBean> response) {
 
                         try {
                             cameraLayout1.setVisibility(View.GONE);
-                        }catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-
 
 
                         progress.setVisibility(View.GONE);
@@ -864,8 +828,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     }
 
 
-
-    private void checkStatus(final String id, final String host, final String port, final String appName, final String streamName , final String url) {
+    private void checkStatus(final String id, final String host, final String port, final String appName, final String streamName, final String url) {
 
         final Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
@@ -902,67 +865,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
                             progressDialog.dismiss();
 
-                            goCoderBroadcastConfig.setHostAddress(host);
-                            goCoderBroadcastConfig.setPortNumber(Integer.parseInt(port));
-                            goCoderBroadcastConfig.setApplicationName(appName);
-                            goCoderBroadcastConfig.setStreamName(streamName);
-
-
-                            WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
-
-                            if (configValidationError != null) {
-                                //Toast.makeText(LiveScreen.this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
-                            } else if (goCoderBroadcaster.getStatus().isRunning()) {
-                                // Stop the broadcast that is currently running
-                                goCoderBroadcaster.endBroadcast(PlayerActivity.this);
-                            } else {
-                                // Start streaming
-                                goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, PlayerActivity.this);
-                            }
-
-
-
-
-                            progress.setVisibility(View.VISIBLE);
-
-                            final bean b = (bean) getApplicationContext();
-
-                            final Retrofit retrofit = new Retrofit.Builder()
-                                    .baseUrl(b.BASE_URL)
-                                    .addConverterFactory(ScalarsConverterFactory.create())
-                                    .addConverterFactory(GsonConverterFactory.create())
-                                    .build();
-
-                            final AllAPIs cr = retrofit.create(AllAPIs.class);
-
-                            retrofit2.Call<acceptRejectBean> call1 = cr.acceptReject(connId , url , "2");
-                            call1.enqueue(new retrofit2.Callback<acceptRejectBean>() {
-                                @Override
-                                public void onResponse(retrofit2.Call<acceptRejectBean> call, retrofit2.Response<acceptRejectBean> response) {
-
-                                    try {
-                                        //cameraLayout1.setVisibility(View.VISIBLE);
-                                        accept1.setVisibility(View.GONE);
-                                        reject1.setVisibility(View.GONE);
-                                        reject3.setVisibility(View.VISIBLE);
-                                    }catch (Exception e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-
-
-
-
-                                    progress.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onFailure(retrofit2.Call<acceptRejectBean> call, Throwable t) {
-                                    progress.setVisibility(View.GONE);
-
-                                }
-                            });
-
 
 
 
@@ -988,7 +890,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     }
 
 
-
     public void schedule(final String vid) {
 
         Timer t = new Timer();
@@ -1007,9 +908,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
                 final AllAPIs cr = retrofit.create(AllAPIs.class);
 
 
-
-
-                retrofit2.Call<getConnectionBean> call1 = cr.getConnection(b.userId , vid);
+                retrofit2.Call<getConnectionBean> call1 = cr.getConnection(b.userId, vid);
 
 
                 call1.enqueue(new retrofit2.Callback<getConnectionBean>() {
@@ -1019,15 +918,13 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
                         try {
 
-                            if (connId.length() == 0)
-                            {
+                            if (connId.length() == 0) {
                                 connId = response.body().getData().get(0).getId();
 
                                 cameraLayout1.setVisibility(View.VISIBLE);
                             }
 
-                        }catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -1039,8 +936,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
                     }
                 });
-
-
 
 
                 retrofit2.Call<getUpdatedBean> call = cr.getUpdatedData(b.userId, vid);
@@ -1192,9 +1087,6 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         //mVideoSurface = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
         //mPlayerStatusTextView.setText("Loading latest broadcast");
         //getLatestResourceUri();
-
-
-
 
 
         initPlayer(uri);
@@ -1381,7 +1273,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
             ImageLoader loader = ImageLoader.getInstance();
 
-            loader.displayImage(item.getUserImage(), holder.image , options);
+            loader.displayImage(item.getUserImage(), holder.image, options);
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -1460,7 +1352,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
             ImageLoader loader = ImageLoader.getInstance();
 
-            loader.displayImage(item.getUserImage(), holder.index , options);
+            loader.displayImage(item.getUserImage(), holder.index, options);
 
 
             holder.user.setText(item.getUserName());
@@ -1655,17 +1547,16 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         //surface.setDataSource(ur);
         //surface.play();
 
-
-
         rtmpDataSourceFactory = new RtmpDataSourceFactory();
+
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
                 rtmpDataSourceFactory, extractorsFactory, null, null);
 
+
         player.prepare(videoSource);
 
         player.setPlayWhenReady(true);
-
 
 
         //vlcVideoLibrary.play(ur);

@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.youthlive.youthlive.WowzaLive">
 
-    <SurfaceView
+    <com.wowza.gocoder.sdk.api.devices.WZCameraView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/surface"
+        android:id="@+id/camera_preview"
         />
 
 </RelativeLayout>

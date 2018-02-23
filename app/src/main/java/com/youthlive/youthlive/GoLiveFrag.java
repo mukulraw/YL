@@ -53,7 +53,7 @@ public class GoLiveFrag extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext() , LiveScreen.class);
-                //Intent intent = new Intent(getContext() , IrisLive.class);
+                //Intent intent = new Intent(getContext() , WowzaLive.class);
                 //intent.putExtra("title" , title.getText().toString());
                 startActivity(intent);
             }

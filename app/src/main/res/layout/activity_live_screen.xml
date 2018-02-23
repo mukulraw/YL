@@ -12,7 +12,7 @@
         android:id="@+id/camera_preview"
         app:scaleMode="fill"
         android:layout_centerInParent="true"
-        app:defaultCamera="back"
+        app:defaultCamera="front"
         app:frameSizePreset="frameSize320x240"/>
 
 
@@ -465,10 +465,10 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="15dp"
-        android:id="@+id/camera_layout1"
+        android:id="@+id/player_layout1"
         >
 
-        <com.twilio.video.VideoView
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:id="@+id/thumbnail_video_view"
             app:overlaySurface="true"
             app:mirror="true"
