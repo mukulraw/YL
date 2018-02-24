@@ -120,5 +120,8 @@ dependencies {
     compile 'com.google.android.exoplayer:extension-rtmp:r2.5.1'
     //implementation project(':streamaxia-opensdk')
     implementation project(':libbambuser-0.9.12')
+    compile 'com.github.pedroSG94.vlc-example-streamplayer:pedrovlc:2.5.14'
+    compile 'com.github.pedroSG94.vlc-example-streamplayer:libvlc:2.5.14'
+
 }
 apply plugin: 'com.google.gms.google-services'

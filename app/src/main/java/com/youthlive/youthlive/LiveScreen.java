@@ -37,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -79,7 +80,6 @@ import com.twilio.video.RoomState;
 import com.twilio.video.TwilioException;
 import com.twilio.video.Video;
 import com.twilio.video.VideoTrack;
-import com.twilio.video.VideoView;
 import com.veer.hiddenshot.HiddenShot;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
@@ -246,7 +246,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
     String sid = "";
 
 
-    SimpleExoPlayerView thumb;
+    //SimpleExoPlayerView thumb;
 
 
     Timer t;
@@ -265,7 +265,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
     private RtmpDataSourceFactory rtmpDataSourceFactory;
-    private SimpleExoPlayer player;
+    private VideoView player;
 
 
     @Override
@@ -274,7 +274,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
         setContentView(R.layout.activity_live_screen);
 
 
-        thumb = (SimpleExoPlayerView)findViewById(R.id.thumbnail_video_view);
+        player = (VideoView)findViewById(R.id.thumbnail_video_view);
 
 
         goCoder = WowzaGoCoder.init(this, "GOSK-C344-0103-177D-9E68-FCF9");
@@ -564,6 +564,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     goCoderBroadcastConfig.setApplicationName("live");
                     goCoderBroadcastConfig.setStreamName(liveId);
 
+                    Log.d("keyFrame" , String.valueOf(goCoderBroadcastConfig.getVideoKeyFrameInterval()));
 
                     WZStreamingError configValidationError = goCoderBroadcastConfig.validateForBroadcast();
 
@@ -1128,24 +1129,25 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                         try {
 
 
-                            connId = response.body().getData().get(0).getId();
 
-                            Log.d("conId" , connId);
+                            Log.d("conId" , response.body().getData().get(0).getUrl());
 
-                            if (connId.length() > 0)
-                            {
+/*
+
 
                                 BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
                                 TrackSelection.Factory videoTrackSelectionFactory =
                                         new AdaptiveTrackSelection.Factory(bandwidthMeter);
                                 TrackSelector trackSelector =
                                         new DefaultTrackSelector(videoTrackSelectionFactory);
+*/
 
 
 
                                 Log.d("entered" , "entered");
 
 
+/*
 
                                 player = ExoPlayerFactory.newSimpleInstance(LiveScreen.this , trackSelector);
 
@@ -1155,33 +1157,47 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
                                 simpleExoPlayerView.setUseController(false);
+*/
 
 
-                                String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/sublive/" + response.body().getData().get(0).getUrl();
+if (!player.isPlaying())
+{
 
-                                //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
+    playerLayout1.setVisibility(View.VISIBLE);
+
+    String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/sublive/" + response.body().getData().get(0).getUrl();
+
+    //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
 // Use `setDataSource` method to set data source, this could be url, assets folder or path
-                                //surface.setDataSource(ur);
-                                //surface.play();
+    //surface.setDataSource(ur);
+    //surface.play();
 
-                                rtmpDataSourceFactory = new RtmpDataSourceFactory();
+                                /*rtmpDataSourceFactory = new RtmpDataSourceFactory();
 
                                 ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
                                 MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
                                         rtmpDataSourceFactory, extractorsFactory, null, null);
+*/
+
+    player.setVideoURI(Uri.parse(ur));
+
+    player.requestFocus();
+
+    player.start();
+
+}
 
 
-                                player.prepare(videoSource);
 
-                                player.setPlayWhenReady(true);
+                                //player.prepare(videoSource);
 
+/*                                player.setPlayWhenReady(true);*/
 
-                            }
-
+                                connId = response.body().getData().get(0).getId();
 
                         }catch (Exception e)
                         {
-                            e.printStackTrace();
+                            //e.printStackTrace();
 
                         }
 
@@ -1191,7 +1207,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     @Override
                     public void onFailure(Call<checkStatusBean> call, Throwable t) {
 
-                        Log.d("error" , t.toString());
+                        //Log.d("error" , t.toString());
 
                     }
                 });
@@ -1250,7 +1266,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
 
 
                         } catch (Exception e) {
-                            e.printStackTrace();
+                           // e.printStackTrace();
                         }
 
 
@@ -1259,7 +1275,7 @@ public class LiveScreen extends AppCompatActivity implements WZStatusCallback {
                     @Override
                     public void onFailure(Call<getUpdatedBean> call, Throwable t) {
 
-                        Log.d("asdasd", t.toString());
+                       // Log.d("asdasd", t.toString());
 
                     }
                 });

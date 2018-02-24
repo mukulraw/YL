@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
+import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -215,10 +216,15 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
     String key;
 
 
+
     private RtmpDataSourceFactory rtmpDataSourceFactory;
-    private SimpleExoPlayer player;
+    //private SimpleExoPlayer player;
 
     //private VlcVideoLibrary vlcVideoLibrary;
+
+    WZPlayerView surfaceView;
+
+    WZPlayerConfig wzPlayerConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +241,9 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         //surface = (TextureVideoView) findViewById(R.id.surface);
 
+        surfaceView = (WZPlayerView) findViewById(R.id.surface);
+
+
 
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -247,14 +256,14 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
 
 
-        player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        //player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
 
-        SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
+        //SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.surface);
 
-        simpleExoPlayerView.setPlayer(player);
+        //simpleExoPlayerView.setPlayer(player);
 
 
-        simpleExoPlayerView.setUseController(false);
+        //simpleExoPlayerView.setUseController(false);
 
 
         //vlcVideoLibrary = new VlcVideoLibrary(this, this, surface);
@@ -1049,7 +1058,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         super.onStop();
 
         //surface.stop();
-        player.stop();
+//        player.stop();
 
     }
 
@@ -1233,7 +1242,7 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
 
         //surface.stop();
 
-        player.stop();
+  //      player.stop();
 
     }
 
@@ -1540,23 +1549,44 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });*/
 
-        String ur = "rtmp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
+        String ur = "rtsp://ec2-18-219-154-44.us-east-2.compute.amazonaws.com:1935/live/" + resourceUri;
 
         //surface.setScaleType(TextureVideoView.ScaleType.CENTER_CROP);
 // Use `setDataSource` method to set data source, this could be url, assets folder or path
         //surface.setDataSource(ur);
         //surface.play();
 
-        rtmpDataSourceFactory = new RtmpDataSourceFactory();
 
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        wzPlayerConfig = new WZPlayerConfig();
+        //wzPlayerConfig.setIsPlayback(true);
+        wzPlayerConfig.setHostAddress("ec2-18-219-154-44.us-east-2.compute.amazonaws.com");
+        wzPlayerConfig.setApplicationName("live");
+        wzPlayerConfig.setStreamName(resourceUri);
+        wzPlayerConfig.setPortNumber(1935);
+
+
+
+        //wzPlayerConfig.setHLSEnabled(true);
+
+        wzPlayerConfig.setAudioEnabled(true);
+        wzPlayerConfig.setVideoEnabled(true);
+        surfaceView.setScaleMode(WZMediaConfig.FILL_VIEW);
+        surfaceView.setKeepScreenOn(true);
+
+        WZStatusCallback statusCallback = new StatusCallback();
+        surfaceView.play(wzPlayerConfig, statusCallback);
+
+        /*ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(Uri.parse(ur),
                 rtmpDataSourceFactory, extractorsFactory, null, null);
 
 
-        player.prepare(videoSource);
+        vlcVideoLibrary.play(ur);
+*/
 
-        player.setPlayWhenReady(true);
+//        player.prepare(videoSource);
+
+//        player.setPlayWhenReady(true);
 
 
         //vlcVideoLibrary.play(ur);
@@ -1577,6 +1607,17 @@ public class PlayerActivity extends AppCompatActivity implements WZStatusCallbac
         });
 */
 
+    }
+
+
+
+    class StatusCallback implements WZStatusCallback{
+        @Override
+        public void onWZStatus(WZStatus wzStatus) {
+        }
+        @Override
+        public void onWZError(WZStatus wzStatus) {
+        }
     }
 
 
