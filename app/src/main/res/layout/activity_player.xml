@@ -9,10 +9,9 @@
 
     <com.wowza.gocoder.sdk.api.player.WZPlayerView
         android:id="@+id/surface"
-        android:layout_width="match_parent"
-        android:keepScreenOn="true"
-        app:cropToParent="true"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_alignParentStart="false"
+        android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
 
@@ -26,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <LinearLayout
@@ -267,6 +267,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <RelativeLayout
