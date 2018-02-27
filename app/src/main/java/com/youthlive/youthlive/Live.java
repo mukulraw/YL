@@ -240,7 +240,8 @@ public class Live extends Fragment {
                     String[] dd = name.split("-");
 
 
-                    Intent intent = new Intent(context, PlayerActivity.class);
+                    //Intent intent = new Intent(context, PlayerActivity.class);
+                    Intent intent = new Intent(context, Player2.class);
                     intent.putExtra("uri", name);
                     intent.putExtra("liveId", name);
                     intent.putExtra("timelineId", String.valueOf(item.getUserId()));
